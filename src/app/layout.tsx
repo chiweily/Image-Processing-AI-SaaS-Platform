@@ -6,6 +6,7 @@ import {
   ClerkProvider,
   SignIn,
   SignInButton,
+  SignOutButton,
   SignedIn,
   SignedOut,
   UserButton
@@ -31,6 +32,9 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={cn("font-IBMPlex antialiased", IBMPlex.variable)}>
+          {/* <SignedOut>
+            <SignInButton />
+          </SignedOut> */}
           {children}
         </body>
       </html>
