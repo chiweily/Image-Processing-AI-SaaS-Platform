@@ -1,3 +1,4 @@
+import { Sidebar } from 'lucide-react'
 import React from 'react'
 
 const Layout = (
@@ -5,6 +6,8 @@ const Layout = (
 ) => {
   return (
     <main className='root'>
+      <Sidebar />
+      {/* <MobileMenu/> */}
       <div className='root-container'>
         <div className='wrapper'>
           {children}
