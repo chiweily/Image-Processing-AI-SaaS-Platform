@@ -6,6 +6,6 @@ export default function Home() {
   return (
     <div>
       <p>Homepage</p>
-      <UserButton afterSignOutUrl='/' />
+      <UserButton />
     </div>
 )}
