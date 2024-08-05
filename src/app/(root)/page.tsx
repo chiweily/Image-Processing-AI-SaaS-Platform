@@ -5,7 +5,6 @@ import React from 'react'
 export default function Home() {
   return (
     <div>
-      <p>Homepage</p>
-      <UserButton />
+      <p>主页</p>
     </div>
 )}
