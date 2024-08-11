@@ -5,7 +5,7 @@ import User from "../database/models/user.model"
 import { connectToDatabase } from "../database/mongoose"
 import { handleError } from "../utils"
 
-// create
+// 创建新用户
 export async function createUser(user: CreateUserParams) {
     try {
         await connectToDatabase()
@@ -17,7 +17,7 @@ export async function createUser(user: CreateUserParams) {
     }
 }
 
-// read
+// 读取用户信息
 export async function getUserById(userId: string) {
     try {
         await connectToDatabase()
@@ -31,7 +31,7 @@ export async function getUserById(userId: string) {
     }
 }
 
-// update
+// 更新用户信息
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
     try {
         await connectToDatabase()
@@ -46,7 +46,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     }
 }
 
-// delete
+// 删除用户
 export async function deleteUser(clerkId: string) {
     try {
         await connectToDatabase()

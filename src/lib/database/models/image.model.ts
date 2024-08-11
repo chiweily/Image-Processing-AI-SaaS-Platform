@@ -23,7 +23,7 @@ export interface IImage extends Document {
     updateAt: Date
 }   
 
-// 模式
+// mongoose 模型
 const ImageSchema = new Schema({
     title: {
         type: String, 
@@ -79,6 +79,5 @@ const ImageSchema = new Schema({
     }
 })
 
-// 创建Image模型
 const Image = models?.Image || model('Image', ImageSchema)
 export default Image

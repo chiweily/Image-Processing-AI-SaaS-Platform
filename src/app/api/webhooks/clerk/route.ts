@@ -72,6 +72,7 @@ export async function POST(req: Request) {
     const newUser = await createUser(user);
 
     // Set public metadata
+    // 将 clerkID 和自己的 ID 合并
     if (newUser) {
       await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {

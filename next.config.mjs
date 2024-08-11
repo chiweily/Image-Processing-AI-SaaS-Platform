@@ -1,24 +1,22 @@
-/** @type {import('next').NextConfig}  */
+/** @type {import('next').NextConfig} */
 const nextConfig = {};
 
-export default nextConfig;
-
-/* import { fileURLToPath } from 'url';
-import path, { dirname } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename); */
+export default nextConfig; 
 
 /** @type {import('next').NextConfig} 
 const nextConfig = {
-  webpack: (config) => {
+  webpack(config) {
     config.module.rules.push({
       test: /\.svg$/,
-      use: ['@svgr/webpack'],
+      use: ['@svgr/webpack']
     });
-
     return config;
+  },
+  images: {
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 };
 
-export default nextConfig;    */
+export default nextConfig;  */
