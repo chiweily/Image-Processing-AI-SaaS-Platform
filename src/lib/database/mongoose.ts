@@ -4,14 +4,14 @@ import mongoose, { Mongoose } from 'mongoose'
 
 const MONGODB_URL = process.env.MONGODB_URL
 
-interface MongooseConnect {
+interface MongooseConnection {
   conn: Mongoose | null
   promise: Promise<Mongoose> | null
 }
 
 // 在全局范围内缓存 Mongoose 连接实例和连接的 promise 对象
 // 在后续操作中可以复用这些连接，避免重复连接数据库的开销
-let cached: MongooseConnect = (global as any).mongoose
+let cached: MongooseConnection = (global as any).mongoose
 
 if(!cached) {
   cached = (global as any).mongoose = { conn: null, promise: null }
@@ -27,7 +27,7 @@ export const connectToDatabase = async () => {
    }
 
    cached.promise = cached.promise || mongoose.connect(MONGODB_URL, {
-    dbName: 'imaginify',
+    dbName: 'project0db',
     bufferCommands: false,
    })
 

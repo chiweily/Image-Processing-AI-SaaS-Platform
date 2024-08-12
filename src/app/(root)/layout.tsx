@@ -9,6 +9,7 @@ const Layout = (
     <main className='root'>
       <Sidebar />
       <MobileNav />
+      
       <div className='root-container'>
         <div className='wrapper'>
           {children}
