@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { AspectRatioKey } from '@/lib/utils'
 
 
 // 表单验证
@@ -41,12 +42,17 @@ const TransformationForm = ({
   data = null,
   creditBalance,
   userId,
-  type
+  type,
+  config = null
 } : TransformationFormProps) => {
 
   const transformationType = transformationTypes[type]
   const [image, setImage] = useState(data)
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null)
+  const [ isSubmitting, setisSubmitting] = useState(false)
+  const [isTransforming, setisTransforming] = useState(false)
+  const [transformationConfig, settransformationConfig] = useState(config)
+
   
   // 初始值设置
   // 若为 update，则使用 data 中的值作为初始值，否则为预定义的 defaultValue
@@ -69,6 +75,28 @@ const TransformationForm = ({
     console.log(values)
   } 
 
+  const onSelectFieldHandler = (
+    value: string, 
+    onChangeField: (value: string) => void
+  ) => {
+    
+  }
+
+  const onInputChangeHandler = (
+    fieldName: string,
+    value: string,
+    type: string,
+    onChangeField: (value: string) => void
+  ) => {
+
+  }
+
+  const onTransformationHandler = (
+
+  ) => {
+
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -82,20 +110,92 @@ const TransformationForm = ({
 
         {type === 'fill' && (
           <CustomField
+            control={form.control}
+            name='aspectRatio'
+            formLabel='Aspect Ratio'
+            className='w-full'
             render={({ field }) => (
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Theme" />
+              <Select
+                onValueChange={(value) => 
+                  onSelectFieldHandler(value, field.onChange)}
+              >
+                <SelectTrigger className="select-field">
+                  <SelectValue placeholder="Select size" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="light">Light</SelectItem>
-                  <SelectItem value="dark">Dark</SelectItem>
-                  <SelectItem value="system">System</SelectItem>
+                  {Object.keys(aspectRatioOptions).map((key) => (
+                    <SelectItem key={key} value={key} className='select-item'>
+                      {aspectRatioOptions[key as AspectRatioKey].label} 
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
           />)}
-        )
+
+          {(type === 'remove' || type === 'recolor') && (
+            <div className='prompt-field'>
+              <CustomField
+                control={form.control}
+                className='w-full' 
+                name='prompt'
+                formLabel={
+                  type === 'remove' ? 'Object to remove' : 'Object to recolor'
+                }
+                render={({ field }) => (
+                  <Input
+                    value={field.value}
+                    className='input-field'
+                    onChange={(e) => onInputChangeHandler(
+                      e.target.value,
+                      'prompt',
+                      type,
+                      field.onChange
+                    )} 
+                  />
+                )}
+              />
+
+              {type === 'recolor' && (
+                <CustomField 
+                  control={form.control}
+                  className='w-full'
+                  name='color'
+                  formLabel='Replacement Color'
+                  render={({ field }) => (
+                    <Input
+                    value={field.value}
+                    className='input-field'
+                    onChange={(e) => onInputChangeHandler(
+                      'color',
+                      e.target.value,
+                      'recolor',
+                      field.onChange
+                    )} 
+                    />
+                  )} 
+              />)}
+            </div>
+          )}
+
+          <div className='felx flex-col gap-4'>
+            <Button 
+              type='button' 
+              className='submit-button capitalize' 
+              disabled={isTransforming || newTransformation === null}
+              onClick={onTransformationHandler}
+            >
+              {isTransforming ? 'Transforming...' : 'Apply Transformation'}
+            </Button>
+            <Button 
+              type='submit' 
+              className='submit-button capitalize' 
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Save Image'}
+            </Button>
+          </div>
+          
       </form>
     </Form>
   )
