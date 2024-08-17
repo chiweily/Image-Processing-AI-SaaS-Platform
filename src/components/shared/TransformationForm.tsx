@@ -1,21 +1,13 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useTransition } from 'react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
+import { Form }from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { aspectRatioOptions, defaultValues, transformationTypes } from '@/constants'
+import { aspectRatioOptions, creditFee, defaultValues, transformationTypes } from '@/constants'
 import CustomField from './CustomField'
 import {
   Select,
@@ -24,7 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { AspectRatioKey } from '@/lib/utils'
+import { AspectRatioKey, debounce, deepMergeObjects } from '@/lib/utils'
+import { updateCredits } from '@/lib/actions/user.actions'
 
 
 // 表单验证
@@ -49,9 +42,11 @@ const TransformationForm = ({
   const transformationType = transformationTypes[type]
   const [image, setImage] = useState(data)
   const [newTransformation, setNewTransformation] = useState<Transformations | null>(null)
-  const [ isSubmitting, setisSubmitting] = useState(false)
-  const [isTransforming, setisTransforming] = useState(false)
-  const [transformationConfig, settransformationConfig] = useState(config)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isTransforming, setIsTransforming] = useState(false)
+  const [transformationConfig, setTransformationConfig] = useState(config)
+  // 是否处于过渡 & 触发过渡
+  const[isPending, startTransition] = useTransition()
 
   
   // 初始值设置
@@ -60,7 +55,7 @@ const TransformationForm = ({
     title: data?.title,
     aspectRatio: data?.aspectRatio,
     color: data?.color,
-    prompt: data?.prompt,
+    prompt: data?.prompt, 
     publicId: data?.publicId,
   } : defaultValues
     
@@ -70,31 +65,71 @@ const TransformationForm = ({
     defaultValues: initialValues,
   })
  
-  // submit handdler
+  // submit按钮定义
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values)
   } 
 
+  // 处理选择字段的变化
   const onSelectFieldHandler = (
     value: string, 
     onChangeField: (value: string) => void
   ) => {
-    
+    // 根据所选值获取图像尺寸信息
+    const imageSize = aspectRatioOptions[value as AspectRatioKey]
+
+    // 更新图像的状态
+    setImage((prevState: any) => {
+      return {
+        ...prevState,
+        width: imageSize.width,
+        height: imageSize.height,
+        aspectRatio: imageSize.aspectRatio,
+    }})
+
+    // 更新newTransformation的状态
+    setNewTransformation(transformationType.config)
+
+    return onChangeField(value)
   }
 
+
+  // 处理输入字段的变化
   const onInputChangeHandler = (
     fieldName: string,
     value: string,
     type: string,
     onChangeField: (value: string) => void
   ) => {
+    debounce(() => {
+      // 更新newTransformation的状态
+      setNewTransformation((prevState: any) => ({
+        ...prevState,
+        [type]: {
+          ...prevState[type],
+          [fieldName === 'prompt' ? 'prompt' : 'to']: value
+        }
+      }))
 
+      return onChangeField(value)
+    }, 1000)
   }
 
-  const onTransformationHandler = (
+  // 处理图像转换操作
+  const onTransformationHandler = async() => {
+    setIsTransforming(true) 
+    // 合并两个对象，结果被setTransformationConfig调用，更新transformationConfig的状态
+    setTransformationConfig(
+      deepMergeObjects(newTransformation, transformationConfig)
+    )
 
-  ) => {
+    // newTransformation为null，表明转换操作已完成
+    setNewTransformation(null)
 
+    // 触发过渡操作
+    startTransition(async() => {
+      // await updateCredits(userId, creditFee)
+    })
   }
 
   return (
