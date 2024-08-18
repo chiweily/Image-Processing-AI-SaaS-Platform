@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/select"
 import { AspectRatioKey, debounce, deepMergeObjects } from '@/lib/utils'
 import { updateCredits } from '@/lib/actions/user.actions'
+import MediaUploader from './MediaUploader'
+import TransformedImage from './TransformedImage'
 
 
 // 表单验证
@@ -212,6 +214,35 @@ const TransformationForm = ({
               />)}
             </div>
           )}
+
+          <div className='media-uploader-field'>
+            <CustomField 
+              control={form.control}
+              name='publicId'
+              className='flex size-full flex-col'
+              render={({ field }) => (
+                <MediaUploader 
+                  onValueChange={field.onChange}
+                  setIamge={setImage}
+                  publicId={field.value}
+                  image={image}
+                  type={type}
+                />
+                )} 
+            />
+
+            <TransformedImage 
+              image={image}
+              type={type}
+              title={form.getValues().title}
+              isTransforming={isTransforming}
+              setIsTransforming={setIsTransforming}
+              transformationConfig={transformationConfig}
+            />
+
+
+
+          </div>
 
           <div className='felx flex-col gap-4'>
             <Button 
