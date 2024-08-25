@@ -69,7 +69,7 @@ const TransformationForm = ({
  
   // submit按钮定义
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+    setIsSubmitting(true)
   } 
 
   // 处理选择字段的变化
@@ -128,9 +128,10 @@ const TransformationForm = ({
     // newTransformation为null，表明转换操作已完成
     setNewTransformation(null)
 
-    // 触发过渡操作
+    // 触发转换操作
+    // todo：需要更新creditfee
     startTransition(async() => {
-      // await updateCredits(userId, creditFee)
+      await updateCredits(userId, -1)
     })
   }
 

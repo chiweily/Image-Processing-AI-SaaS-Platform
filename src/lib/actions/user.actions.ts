@@ -88,10 +88,10 @@ export async function updateCredits(userId: string, creditFee: number) {
             { $inc: {creditBalance: creditFee}},
             {new: true}
         )
-        if(!updatedUserCredits) {
+        if(!updatedUserCredits) 
             throw new Error("User credits update failed")
             return JSON.parse(JSON.stringify(updatedUserCredits))
-        }
+        
         } catch (error) {
             handleError(error)
         }
