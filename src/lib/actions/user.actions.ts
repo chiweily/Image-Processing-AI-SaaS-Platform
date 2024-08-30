@@ -71,7 +71,7 @@ export async function deleteUser(clerkId: string) {
 }
 
 /**
- * 更新用户信用额度
+ * 更新用户credits
  * @param userId 
  * @param creditFee 要更新的额度
  * @returns 更新后的用户对象的字符串表示
