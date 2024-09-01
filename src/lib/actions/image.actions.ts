@@ -6,6 +6,7 @@ import Image from "../database/models/image.model"
 import { revalidatePath } from "next/cache"
 import User from "../database/models/user.model"
 import { redirect } from "next/navigation"
+import { v2 as cloudinary } from 'cloudinary'
 
 // 获取图像作者的信息
 const populateUser = (query: any) => 
@@ -95,6 +96,27 @@ export async function getImageById(imageId: string) {
         }
 
         return JSON.parse(JSON.stringify(image))
+
+    } catch (error) {
+        handleError(error)
+    }
+}
+
+
+// 获取当前所有图片
+export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
+    limit?: number;
+    page?: number;
+    searchQuery?: string;
+}) {
+    try {
+        await connectToDatabase()
+
+        cloudinary.config({
+            cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+            
+        })
+        
 
     } catch (error) {
         handleError(error)

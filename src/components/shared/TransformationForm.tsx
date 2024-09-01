@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useTransition } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -23,6 +23,7 @@ import TransformedImage from './TransformedImage'
 import { getCldImageUrl } from 'next-cloudinary'
 import { addImage, updateImage } from '@/lib/actions/image.actions'
 import { useRouter } from 'next/navigation'
+import InsufficientCreditsModal from './InsufficientCreditsModal'
 
 
 // 表单验证
@@ -51,7 +52,7 @@ const TransformationForm = ({
   const [isTransforming, setIsTransforming] = useState(false)
   const [transformationConfig, setTransformationConfig] = useState(config)
   // 是否处于过渡 & 触发过渡
-  const[isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
   
@@ -199,13 +200,25 @@ const TransformationForm = ({
     // 触发转换操作
     // todo：需要更新creditfee
     startTransition(async() => {
-      await updateCredits(userId, -1)
+      await updateCredits(userId, creditFee)
     })
   }
+
+  
+  useEffect(() => {
+    if(image && (type === 'restore' || type === 'removeBackground')) {
+      setNewTransformation(transformationType.config)
+    } else {
+      setNewTransformation(null)
+    }
+  }, [image, transformationType.config, type])
+
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* 信用余额不足时显示 */}
+        {creditBalance < Math.abs(creditFee) && <InsufficientCreditsModal />}
         <CustomField 
           control={form.control}
           name='title'
