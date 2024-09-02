@@ -11,10 +11,11 @@ import {
     PaginationPrevious,
   } from "@/components/ui/pagination"
 import { IImage } from '@/lib/database/models/image.model'
+import Search from './Search'
   
 
 export const Collection = ({
-    hasSerch = false,
+    hasSearch = false,
     images,
     totalPages = 1,
     page
@@ -22,7 +23,7 @@ export const Collection = ({
     images: IImage[];
     totalPages?: number;
     page: number;
-    hasSerch?: boolean;
+    hasSearch?: boolean;
 }) => {
 
 
@@ -30,7 +31,7 @@ export const Collection = ({
     <>
         <div className='collection-heading'>
             <h2 className='h2-bold text-dark-600'>Recent Edits</h2>
-            {hasSerch && <Search />}
+            {hasSearch && <Search />}
         </div>
 
         {images.length > 0 ? (

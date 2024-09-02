@@ -120,8 +120,42 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
         })
 
         // 初始化设置
-        let expression = 'folder=imaginary_platform'
+        let expression = 'folder=imaginify'
+
+        // search 的内容pin到cloudinary
+        if(searchQuery) {
+            expression += `AND ${searchQuery}`
+        }
+
+        // 执行搜索操作，resources属性包含了搜索到的资源
+        const { resources } = await cloudinary.search.expression(expression).execute()
+
+        // 获取search到的结果的id
+        const resourceIds = resources.map((resource: any) => resource.public_id)
+
+        let query = {}
+        if(searchQuery) {
+            query = {
+                publicId: {
+                    $in: resourceIds
+                }
+            }
+        }
+
         
+        const skipAmount = (Number(page) - 1) * limit
+
+        // 从数据库中获取图像数据，并对其进行排序、分页、数量限制
+        const images = await populateUser(Image.find(query).sort({ createdAt: -1 }).skip(skipAmount).limit(limit))
+        
+        const totalImages = await Image.find(query).countDocuments()
+        const savedImages = await Image.find().countDocuments()
+
+        return {
+            data: JSON.parse(JSON.stringify(images)),
+            totalPage: Math.ceil(totalImages / limit),
+            savedImages
+        }
 
     } catch (error) {
         handleError(error)
