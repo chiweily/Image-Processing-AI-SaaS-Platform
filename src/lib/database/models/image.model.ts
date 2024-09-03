@@ -4,7 +4,7 @@ import { model, models, Schema } from "mongoose"
 
 export interface IImage extends Document {
     title: string
-    tansformationType: string
+    transformationType: string
     publicId: string
     secureURL: string
     width?: number
