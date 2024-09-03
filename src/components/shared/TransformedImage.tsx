@@ -1,8 +1,10 @@
+'use client'
+
 import React from 'react'
 import { Button } from '../ui/button'
 import Image from 'next/image'
-import { CldImage } from 'next-cloudinary'
-import { dataUrl, debounce, getImageSize } from '@/lib/utils'
+import { CldImage, getCldImageUrl } from 'next-cloudinary'
+import { dataUrl, debounce, download, getImageSize } from '@/lib/utils'
 import { PlaceholderValue } from 'next/dist/shared/lib/get-img-props'
 
 const TransformedImage = ({
@@ -15,8 +17,16 @@ const TransformedImage = ({
   hasDownload = false
 }: TransformedImageProps) => {
 
-  // todo：转换后的图片下载
-  const downloadHandler = () => {
+  // 下载转换后的图片
+  const downloadHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+
+    download(getCldImageUrl({
+      width: image?.width,
+      height: image?.height,
+      src: image?.publicId,
+      ...transformationConfig
+    }), title)
 
   }
 
@@ -57,20 +67,21 @@ const TransformedImage = ({
             onError={() => {
               debounce(() => {
                 setIsTransforming && setIsTransforming(false)
-              }, 8000)
+              }, 8000)()
             }}
             {...transformationConfig}
           />
 
-          {/* transforming */}
+          {/* transforming时的效果 */}
           {isTransforming && (
             <div className='transforming-loader'>
               <Image 
                 src='/assets/icons/spinner.svg'
-                alt='transforming'
+                alt='spinner'
                 width={50}
                 height={50}
               />
+              <p className='text-white/80'>Please wait...</p>
             </div>
           )}
 

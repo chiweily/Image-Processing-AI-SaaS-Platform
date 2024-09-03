@@ -4,7 +4,9 @@ import TransformedImage from '@/components/shared/TransformedImage'
 import { Button } from '@/components/ui/button'
 import { getImageById } from '@/lib/actions/image.actions'
 import { getImageSize } from '@/lib/utils'
+// import { useAuth } from '@clerk/nextjs'
 import { auth } from '@clerk/nextjs/server'
+// import { auth } from '@clerk/nextjs/server'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -86,6 +88,7 @@ const ImageDetails = async ({params: {id}}: SearchParamProps) => {
 
         {userId === image.author.clerkId && (
           <div className='mt-4 space-y-4'>
+            
             <Button asChild type='button' className='submit-button capitalize'>
               <Link href={`/transformations/${image._id}/update`}>
                 Update Image
