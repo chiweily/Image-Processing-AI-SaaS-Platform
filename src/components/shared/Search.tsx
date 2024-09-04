@@ -12,6 +12,7 @@ const Search = () => {
   const router = useRouter()
   const searchParams = useSearchParams()
 
+  // 搜索框的防抖
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if(query) {
