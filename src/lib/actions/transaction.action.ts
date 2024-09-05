@@ -7,7 +7,7 @@ import { connectToDatabase } from '../database/mongoose'
 import Transaction from '../database/models/transaction.model'
 import { updateCredits } from './user.actions'
 
-
+// checkout剩余的credits
 export async function checkoutCredits(transaction: CheckoutTransactionParams) {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -39,6 +39,7 @@ export async function checkoutCredits(transaction: CheckoutTransactionParams) {
     redirect(session.url!)
 }
 
+// 新建交易
 export async function createTransaction(transaction: CreateTransactionParams) {
     try {
         await connectToDatabase()
