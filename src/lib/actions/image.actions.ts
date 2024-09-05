@@ -141,8 +141,6 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
                 }
             }
         }
-
-        
         const skipAmount = (Number(page) - 1) * limit
 
         // 从数据库中获取图像数据，并对其进行排序、分页、数量限制
@@ -157,6 +155,32 @@ export async function getAllImages({ limit = 9, page = 1, searchQuery = ''}: {
             savedImages
         }
 
+    } catch (error) {
+        handleError(error)
+    }
+}
+
+// 根据用户id获取对应图片
+export async function getUserImages({limit = 9, page = 1, userId}: {
+    limit?: number;
+    page?: number;
+    userId: string;
+}) {
+    try {
+        await connectToDatabase()
+
+        const skipAmount = (Number(page) - 1 * limit)
+
+        const images = await populateUser(Image.find({author: userId}))
+            .sort({updateAt: -1})
+            .skip(skipAmount)
+            .limit(limit)
+
+        const totalImages = await Image.find({author: userId}).countDocuments()
+        return {
+            data: JSON.parse(JSON.stringify(images)),
+            totalPage: Math.ceil(totalImages / limit)
+        }
     } catch (error) {
         handleError(error)
     }

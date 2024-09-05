@@ -57,7 +57,7 @@ export const Collection = ({
         {images.length > 0 ? (
             <ul>
                 {images.map((image) => (
-                    <Card image={image} key={image._id} />
+                    <Card image={image} key={image.author._id} />
                 ))}
             </ul>
         ) : (
@@ -100,7 +100,7 @@ export const Collection = ({
 const Card = ({image} : {image: IImage}) => {
     return (
         <li>
-            <Link href={`/transformations/${image._id}`} className='collection-card'>
+            <Link href={`/transformations/${image.author._id}`} className='collection-card'>
             <CldImage 
                 src={image.publicId}
                 alt={image.title}
