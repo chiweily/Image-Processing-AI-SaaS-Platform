@@ -282,13 +282,13 @@ const TransformationForm = ({
                   formLabel='Replacement Color'
                   render={({ field }) => (
                     <Input
-                    value={field.value}
-                    className='input-field'
-                    onChange={(e) => onInputChangeHandler(
-                      'color',
-                      e.target.value,
-                      'recolor',
-                      field.onChange
+                      value={field.value}
+                      className='input-field'
+                      onChange={(e) => onInputChangeHandler(
+                        'color',
+                        e.target.value,
+                        'recolor',
+                        field.onChange
                     )} 
                     />
                   )} 

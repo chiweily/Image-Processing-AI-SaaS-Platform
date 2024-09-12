@@ -12,17 +12,19 @@ import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { navLinks } from '@/constants'
 import { usePathname } from 'next/navigation'
 import { Button } from '../ui/button'
+import useIcons from '@/hooks/useIcons'
   
 
 const MobileNav = () => {
     const pathname  = usePathname()
+    const icons = useIcons()
 
     return (
         <header className='header'>
             <Link href='/' className='flex items-center gap-2 md:py-2'>
                 <Image 
                     alt='logo'
-                    src='/assets/images/logo-text.svg'
+                    src={icons['/assets/images/logo-text.svg']}
                     width={180}
                     height={28}
                 />
@@ -33,19 +35,19 @@ const MobileNav = () => {
                 <UserButton />
                 <Sheet>
                     <SheetTrigger>
-                        <Image 
+                      <Image 
                         alt='menu'
-                        src='/assets/icons/menu.svg'
+                        src={icons['/assets/icons/menu.svg']}
                         width={32}
                         height={32}
                         className='cursor-pointer'
-                        />
+                      />
                     </SheetTrigger>
                     <SheetContent side={'left'} className='sheet-content sm:w-64'>
                         <>
                             <Image 
                             alt='logo'
-                            src='/assets/images/logo-text.svg'
+                            src={icons['/assets/images/logo-text.svg']}
                             width={152}
                             height={23}
                             />
@@ -55,11 +57,11 @@ const MobileNav = () => {
 
                                 return (
                                     <li key={link.route} 
-                                        className={`${isActive && 'gradient-text'} p-18 flex bg-green-400 text-dark-700` }    
+                                        className={`${isActive && 'gradient-text'} p-18 flex bg-purple-200 text-gray-300` }    
                                     >
                                         <Link className='sidebar-link cursor-pointer' href={link.route}>
                                             <Image 
-                                                src={link.icon} 
+                                                src={icons[link.icon as keyof typeof icons]}  
                                                 alt='logo' 
                                                 width={24} 
                                                 height={24}

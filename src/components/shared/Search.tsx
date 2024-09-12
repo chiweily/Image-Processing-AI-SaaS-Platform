@@ -6,13 +6,15 @@ import { Input } from '../ui/input'
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { formUrlQuery, removeKeysFromQuery } from '@/lib/utils'
+import useIcons from '@/hooks/useIcons'
 
 const Search = () => {
   const [query, setQuery] = useState('')
   const router = useRouter()
   const searchParams = useSearchParams()
+  const icons = useIcons()
 
-  // 搜索框的防抖
+  // 搜索框的防抖优化
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if(query) {
@@ -38,7 +40,7 @@ const Search = () => {
     <div className='search'>
       <Image 
         alt='search'
-        src='/assets/icons/search.svg'
+        src={icons['/assets/icons/search.svg']}
         width={24}
         height={24}
       />

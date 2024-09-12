@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { CldImage, getCldImageUrl } from 'next-cloudinary'
 import { dataUrl, debounce, download, getImageSize } from '@/lib/utils'
 import { PlaceholderValue } from 'next/dist/shared/lib/get-img-props'
+import useIcons from '@/hooks/useIcons'
 
 const TransformedImage = ({
   image, 
@@ -17,17 +18,17 @@ const TransformedImage = ({
   hasDownload = false
 }: TransformedImageProps) => {
 
+  const icons = useIcons()
+
   // 下载转换后的图片
   const downloadHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault()
-
     download(getCldImageUrl({
       width: image?.width,
       height: image?.height,
       src: image?.publicId,
       ...transformationConfig
     }), title)
-
   }
 
   return (
@@ -40,7 +41,7 @@ const TransformedImage = ({
         {hasDownload && (
           <Button className='download-btn' onClick={downloadHandler}>
             <Image  
-              src='/assets/icons/download.svg'
+              src={icons['/assets/icons/download.svg']}
               alt='download'
               width={24}
               height={24}
@@ -76,7 +77,7 @@ const TransformedImage = ({
           {isTransforming && (
             <div className='transforming-loader'>
               <Image 
-                src='/assets/icons/spinner.svg'
+                src={icons['/assets/icons/spinner.svg']}
                 alt='spinner'
                 width={50}
                 height={50}

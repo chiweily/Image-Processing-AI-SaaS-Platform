@@ -5,6 +5,7 @@ import { CldImage, CldUploadWidget } from 'next-cloudinary'
 import Image from 'next/image'
 import { dataUrl, getImageSize } from '@/lib/utils'
 import { PlaceholderValue } from 'next/dist/shared/lib/get-img-props'
+import useIcons from '@/hooks/useIcons'
 
 type MediaUploaderProps ={
     onValueChange: (value: string) => void
@@ -22,6 +23,7 @@ const MediaUploader = ({
     type
 }: MediaUploaderProps) => {
   const { toast } = useToast()
+  const icons = useIcons()
 
   // 上传成功
   const onUploadSuccessHandler = (result: any) => {
@@ -86,7 +88,7 @@ const MediaUploader = ({
                         <div className='media-uploader_cta' onClick={() => open()}>
                             <div className='media-uploader_cta-image'>
                                 <Image 
-                                    alt='添加图片'
+                                    alt='add image'
                                     src='/assets/icons/add.svg'
                                     width={24}
                                     height={24}
