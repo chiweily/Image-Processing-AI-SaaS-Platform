@@ -17,7 +17,6 @@ const Sidebar = () => {
         <div className='flex size-full flex-col gap-4'>
 
           {/* logo图标 */}
-          {/* TODO: svg格式的图标无法渲染 */}
           <Link href='/' className='sidebar-logo' passHref>
             <Image src='/assets/images/logo-icon.svg' alt='logo' width={180} height={30}/>
           </Link>
@@ -30,7 +29,6 @@ const Sidebar = () => {
                 {navLinks.slice(0, 6).map((link) => {
                   const isActive = link.route === pathname
 
-                  // TODO: svg格式的图标无法渲染
                   return (
                     <li key={link.route} className={`sidebar-nav_element group ${
                       isActive ? 'bg-purple-200 text-gray-300' : 'text-gray-700'
@@ -56,7 +54,6 @@ const Sidebar = () => {
                   {navLinks.slice(6).map((link) => {
                     const isActive = link.route === pathname
 
-                    // TODO: svg格式的图标无法渲染
                     return (
                       <li key={link.route} className={`sidebar-nav_element group ${
                         isActive ? 'bg-purple-200 text-gray-300' : 'text-gray-700'

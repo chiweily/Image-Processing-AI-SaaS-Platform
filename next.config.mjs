@@ -7,8 +7,8 @@ const nextConfig = {
         hostname: 'res.cloudinary.com',
         port: ''
       }
-    ]
-  }
+    ],
+  },
 };
 
 export default nextConfig; 
