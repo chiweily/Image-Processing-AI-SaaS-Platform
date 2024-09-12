@@ -115,6 +115,7 @@ const Card = ({image} : {image: IImage}) => {
                 <p className='p-20-semibold mr-3 line-clamp-1 text-dark-600'>
                     {image.title}
                 </p>
+                {/* todo */}
                 <Image 
                     src={`/assets/icons/${transformationTypes[image.transformationType as TransformationTypeKey].icon}`}
                     alt={image.title}

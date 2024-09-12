@@ -14,10 +14,12 @@ import {
   } from "@/components/ui/alert-dialog"
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import useIcons from '@/hooks/useIcons'
   
 
 const InsufficientCreditsModal = () => {
     const router = useRouter()
+    const icons = useIcons()
 
 
     return (
@@ -34,7 +36,7 @@ const InsufficientCreditsModal = () => {
                             onClick={() => router.push('/profile')}
                         >
                             <Image 
-                                src='/assets/icons/close.svg'
+                                src={icons['/assets/icons/close.svg']}
                                 alt='credit coins'
                                 width={24}
                                 height={24}
@@ -44,7 +46,7 @@ const InsufficientCreditsModal = () => {
                     </div>
 
                     <Image 
-                        src='/assets/images/stacked-coins.png'
+                        src={icons['/assets/images/stacked-coins.png']}
                         alt='credit coins'
                         width={462}
                         height={122}

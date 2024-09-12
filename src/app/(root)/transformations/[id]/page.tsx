@@ -66,6 +66,7 @@ const ImageDetails = async ({params: {id}}: SearchParamProps) => {
           <div className='flex flex-col gap-4'>
             <h3 className='h3-bold text-dark-600'>Original</h3>
 
+            {/* TODO */}
             <Image 
               src={image.secureURL}
               alt='image'

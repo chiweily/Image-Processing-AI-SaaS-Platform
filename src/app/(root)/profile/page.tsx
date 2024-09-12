@@ -1,5 +1,6 @@
 import { Collection } from '@/components/shared/Collection'
 import Header from '@/components/shared/Header'
+import useIcons from '@/hooks/useIcons'
 import { getUserImages } from '@/lib/actions/image.actions'
 import { getUserById } from '@/lib/actions/user.actions'
 import { auth } from '@clerk/nextjs/server'
@@ -9,6 +10,7 @@ import React from 'react'
 
 const Profile = async ({searchParams}: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1
+  const icons = useIcons()
 
   const {userId} = auth()
   if(!userId) redirect('/sign-in')
@@ -26,7 +28,7 @@ const Profile = async ({searchParams}: SearchParamProps) => {
           <p className='p-14-medium md:p-16-medium'>CREDITS AVAILABLE</p>
           <div className='mt-4 flex items-center gap-4'>
             <Image
-              src='/assets/icons/photo.svg'
+              src={icons['/assets/icons/photo.svg']}
               alt='coins'
               width={50}
               height={50}
@@ -40,7 +42,7 @@ const Profile = async ({searchParams}: SearchParamProps) => {
           <p className='p-14-medium md:p-16-medium'>IMAGE MANIPULATION DONE</p>
           <div className='mt-4 flex items-center gap-4'>
             <Image
-              src='/assets/icons/photo.svg'
+              src={icons['/assets/icons/photo.svg']}
               alt='coins'
               width={50}
               height={50}

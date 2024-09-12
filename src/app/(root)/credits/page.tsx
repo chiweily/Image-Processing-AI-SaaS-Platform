@@ -38,6 +38,7 @@ const Credits = async () => {
                 <ul className='flex flex-col gap-5 py-9'>
                   {plan.inclusions.map((inclusion) => (
                     <li key={plan.name + inclusion.label} className='flex items-center gap-4'>
+                      {/* TODO: 根据hook修改src */}
                       <Image 
                         src={`/assets/icons/${inclusion.isIncluded ? 'check.svg' : 'cross.svg'}`}
                         alt='check'

@@ -1,6 +1,7 @@
 
 import { Collection } from '@/components/shared/Collection'
 import { navLinks } from '@/constants'
+import useIcons from '@/hooks/useIcons'
 import { getAllImages } from '@/lib/actions/image.actions'
 
 import Image from 'next/image'
@@ -10,8 +11,8 @@ import React from 'react'
 const Home = async ({ searchParams }: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1
   const searchQuery = (searchParams?.query as string)  || ''
-
   const images = await getAllImages({ page, searchQuery })
+  const icons = useIcons()
 
   return (
     <>
@@ -28,7 +29,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
             >
               <li className='flex-center w-fit rounded-full bg-white p-4'>
                 <Image 
-                  src={link.icon}
+                  src={icons[link.icon as keyof typeof icons]}
                   alt='icon'
                   width={24}
                   height={24}
