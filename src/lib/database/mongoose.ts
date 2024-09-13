@@ -9,15 +9,20 @@ interface MongooseConnection {
   promise: Promise<Mongoose> | null
 }
 
-// 在全局范围内缓存 Mongoose 连接实例和连接的 promise 对象
-// 在后续操作中可以复用这些连接，避免重复连接数据库的开销
-let cached: MongooseConnection = (global as any).mongoose
-
-if(!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null }
+// 全局变量类型
+declare global {
+  var mongoose: MongooseConnection | undefined
 }
 
-export const connectToDatabase = async () => {
+// 使用缓存机制来避免重复连接数据库 
+// 在全局范围内缓存 Mongoose 连接实例和连接的 promise 对象
+let cached: MongooseConnection = global.mongoose || { conn: null, promise: null }
+
+if(!global.mongoose) {
+  global.mongoose = cached
+}
+
+export const connectToDatabase = async (): Promise<Mongoose>=> {
    if(cached.conn) {
     return cached.conn
    }
@@ -26,11 +31,19 @@ export const connectToDatabase = async () => {
     throw new Error('请在 .env 文件中设置 MONGODB_URL 环境变量')
    }
 
-   cached.promise = cached.promise || mongoose.connect(MONGODB_URL, {
-    dbName: 'image-processing',
-    bufferCommands: false,
-   })
+   try {
+    if(!cached.promise) {
+      const opts = {
+        dbName: 'image-processing',
+        bufferCommands: false,
+      }
 
-   cached.conn = await cached.promise
-   return cached.conn
+      cached.promise = mongoose.connect(MONGODB_URL, opts)
+    }
+    cached.conn = await cached.promise
+    return cached.conn
+   } catch (error) {
+    console.error('MongoDB 连接错误:', error);
+    throw error
+   }
 }

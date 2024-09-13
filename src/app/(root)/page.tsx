@@ -17,7 +17,8 @@ const Home = async ({ searchParams }: SearchParamProps) => {
   return (
     <>
       <section className='home'>
-        <h1 className='home-heading'>
+        {/* todo: 1. 背景图片无法显示，在tailwind.config.js里设置 2. h1文字的颜色*/}
+        <h1 className='home-heading bg-purple-300'>
           Unleash the power of AI with this paltform
         </h1>
         <ul className='flex-center w-full gap-20'>

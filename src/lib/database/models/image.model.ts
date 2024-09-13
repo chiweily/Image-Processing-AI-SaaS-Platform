@@ -1,6 +1,6 @@
 // 图像转换 model
 
-import { model, models, Schema } from "mongoose"
+import { model, models, Schema, Document } from "mongoose"
 
 export interface IImage extends Document {
     title: string
@@ -9,7 +9,7 @@ export interface IImage extends Document {
     secureURL: string
     width?: number
     height?: number
-    config?: object
+    config?: Record<string, unknown>
     transformationUrl?: string
     aspectRatio?: string
     color?: string
@@ -19,12 +19,12 @@ export interface IImage extends Document {
         firstName: string,
         lastName: string
     }
-    createAt: Date
-    updateAt: Date
+    createdAt: Date
+    updatedAt: Date
 }   
 
 // mongoose 模型
-const ImageSchema = new Schema({
+const ImageSchema = new Schema<IImage>({
     title: {
         type: String, 
         required: true
@@ -67,17 +67,17 @@ const ImageSchema = new Schema({
         ref: 'User',
         required: true
     },
-    createAt: {
+    createdAt: {
         type: Date,
         default: Date.now,
         required: true
     },
-    updateAt: {
+    updatedAt: {
         type: Date,
         default: Date.now,
         required: true
     }
 })
 
-const Image = models?.Image || model('Image', ImageSchema)
+const Image = models?.Image || model<IImage>('Image', ImageSchema)
 export default Image

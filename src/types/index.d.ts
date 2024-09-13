@@ -1,4 +1,4 @@
-// 属性类型
+// 类型声明
 
 // ====== USER PARAMS
 declare type CreateUserParams = {
