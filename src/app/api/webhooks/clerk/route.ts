@@ -5,38 +5,44 @@ import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-
-  // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
 
   if (!WEBHOOK_SECRET) {
-    throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
+    console.error('请在 .env 文件中设置 WEBHOOK_SECRET 环境变量')
+    return new Response('配置错误', {
+      status: 500
+    })
   }
 
-  // Get the headers
-  const headerPayload = headers();
-  const svix_id = headerPayload.get("svix-id");
-  const svix_timestamp = headerPayload.get("svix-timestamp");
-  const svix_signature = headerPayload.get("svix-signature");
+  /**
+   * @param svix_id: 每个 webhook 请求的唯一 ID
+   * @param svix_timestamp: 每个 webhook 请求的时间戳
+   * @param svix_signature: 验证 webhook 请求真实性的签名
+   */
+  
+  const headerPayload = headers()
+  const svix_id = headerPayload.get("svix-id")
+  const svix_timestamp = headerPayload.get("svix-timestamp")
+  const svix_signature = headerPayload.get("svix-signature")
 
-  // If there are no headers, error out
+  // no headers, error out
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return new Response('Error occured -- no svix headers', {
+    return new Response('错误！没有 svix headers', {
       status: 400
     })
   }
 
-  // Get the body
-  const payload = await req.json()
-  const body = JSON.stringify(payload);
-
-  // Create a new Svix instance with your secret.
-  const wh = new Webhook(WEBHOOK_SECRET);
-
+  
   let evt: WebhookEvent
 
   // Verify the payload with the headers
   try {
+    // Get the body
+    const payload = await req.json()
+    const body = JSON.stringify(payload)
+    // Create a new Svix instance with your secret.
+    const wh = new Webhook(WEBHOOK_SECRET)
+
     evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
@@ -50,14 +56,33 @@ export async function POST(req: Request) {
   }
 
   // 获取 id 和事件类型
-  const { id } = evt.data;
-  const eventType = evt.type;
+  const { id } = evt.data
+  const eventType = evt.type
 
+  try {
+    switch (eventType) {
+      case 'user.created':
+        return await handleUserCreated(evt.data)
+      case 'user.updated':
+        return await handleUserUpdated(evt.data)
+      case 'user.deleted':
+        return await handleUserDeleted(evt.data)
+      default:
+        console.log(`Unhandled event type: ${eventType}`)
+        return new Response('Unsupported event type', {
+          status: 400
+        })
+    }
+  } catch (error) {
+    console.error(`Error processing ${eventType} event:`, error)
+    return new Response('Error processing event', {
+      status: 500
+    })
+  }
 
-  // create
-  if (eventType === 'user.created') {
-    const { id, email_addresses, image_url, first_name, last_name, username } = evt.data;
-
+  // create user
+  async function handleUserCreated(data: any) {
+    const { id, email_addresses, image_url, first_name, last_name, username } = data
     const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
@@ -67,26 +92,25 @@ export async function POST(req: Request) {
       photo: image_url,
     }
 
-    // 提取相关信息后调用 createUser 创建新用户
-    const newUser = await createUser(user);
+    // 提取相关信息后创建新用户
+    const newUser = await createUser(user)
 
-    // Set public metadata
-    // 将 clerkID 和自己的 ID 合并
+    // 将 clerkID 和数据库中的 ID 合并
     if (newUser) {
       await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
           userId: newUser._id,
-        },
-      });
+        }
+      })
     }
 
-    return NextResponse.json({ message: "OK", user: newUser });
+    return NextResponse.json({ message: 'User created', user: newUser })
   }
+  
 
-  // update
-  if (eventType === "user.updated") {
-    const { id, image_url, first_name, last_name, username } = evt.data;
-
+  // update user info
+  async function handleUserUpdated(data: any) {
+    const { id, image_url, first_name, last_name, username } = data
     const user = {
       firstName: first_name as string,
       lastName: last_name as string,
@@ -94,22 +118,16 @@ export async function POST(req: Request) {
       photo: image_url,
     }
 
-    const updatedUser = await updateUser(id, user);
-
-    return NextResponse.json({ message: "OK", user: updatedUser })
+    const updatedUser = await updateUser(id, user)
+    return NextResponse.json({ message: 'User updated', user: updatedUser })
   }
 
-  // delete
-  if (eventType === "user.deleted") {
-    const { id } = evt.data;
 
-    const deletedUser = await deleteUser(id!);
+  // delete user
+  async function handleUserDeleted(data: any) {
+    const { id } = data
+    const deletedUser = await deleteUser(id!)
 
-    return NextResponse.json({ message: "OK", user: deletedUser });
+    return NextResponse.json({ message: 'User deleted', user: deletedUser })
   }
-  
-  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
-  console.log("Webhook body:", body);
-
-  return new Response("", { status: 200 });
 }
