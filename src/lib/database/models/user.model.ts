@@ -2,7 +2,7 @@
 
 import { model, models, Schema } from "mongoose"
 
-// interface
+/* // interface
 export interface User {
     _id: string,
     clerkId: string,
@@ -13,7 +13,7 @@ export interface User {
     lastName: string,
     planId: number,
     creditBalance: number,
-}
+} */
 
 // schema
 const UserSchema = new Schema({

@@ -2,7 +2,7 @@
 
 import mongoose, { Mongoose } from 'mongoose'
 
-const MONGODB_URL = process.env.MONGODB_URL
+const MONGODB_URL = process.env.MONGODB_URL!
 
 interface MongooseConnection {
   conn: Mongoose | null
@@ -34,8 +34,9 @@ export const connectToDatabase = async (): Promise<Mongoose>=> {
    try {
     if(!cached.promise) {
       const opts = {
-        dbName: 'image-processing',
+        dbName: 'image-processing-db',
         bufferCommands: false,
+        connectTimeoutMS: 30000,
       }
 
       cached.promise = mongoose.connect(MONGODB_URL, opts)

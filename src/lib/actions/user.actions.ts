@@ -9,6 +9,8 @@ import { handleError } from "../utils"
 export async function createUser(user: CreateUserParams) {
     try {
         await connectToDatabase()
+        console.log('mongoDB已连接') 
+        
         const newUser = await User.create(user)
 
         return JSON.parse(JSON.stringify(newUser))
@@ -20,17 +22,25 @@ export async function createUser(user: CreateUserParams) {
 // 读取用户信息
 export async function getUserById(userId: string) {
     try {
+
         await connectToDatabase()
+        console.log('mongoDB已连接')
+
+        console.log(`正在查询 MongoDB 中的 clerkId: ${userId}`);
         const user = await User.findOne({clerkId: userId})
+        
+        console.log(`User查询结果:`, user);
 
         if(!user) { 
-            console.log(`User not found for clerkId: ${userId}`)
-            throw new Error("User not found")
+            console.log(`User not found for clerkId: ${userId}`);
+            throw new Error(`User not found for clerkId: ${userId}`);
         }
 
-        return JSON.parse(JSON.stringify(user))
+        /* return JSON.parse(JSON.stringify(user)) */
+        return user
     } catch (error) {
-        handleError(error)
+        console.error("Error in getUserById:", error);
+        throw error;
     }
 }
 
@@ -96,3 +106,16 @@ export async function updateCredits(userId: string, creditFee: number) {
             handleError(error)
         }
 }
+
+// test是否正确连接到数据库
+/* async function testConnection() {
+    try {
+      const conn = await connectToDatabase();
+      console.log('已连接到mongodb!');
+      // 可以在这里进行一些简单的数据库操作来进一步验证连接
+    } catch (error) {
+      console.error('未连接到MongoDB:', error);
+    }
+  }
+  
+  testConnection(); */

@@ -32,17 +32,16 @@ export async function POST(req: Request) {
     })
   }
 
-  
+  // Get the body
+  const payload = await req.json()
+  const body = JSON.stringify(payload)
+  // Create a new Svix instance with your secret.
+  const wh = new Webhook(WEBHOOK_SECRET)
   let evt: WebhookEvent
 
   // Verify the payload with the headers
   try {
-    // Get the body
-    const payload = await req.json()
-    const body = JSON.stringify(payload)
-    // Create a new Svix instance with your secret.
-    const wh = new Webhook(WEBHOOK_SECRET)
-
+    
     evt = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
@@ -83,6 +82,7 @@ export async function POST(req: Request) {
   // create user
   async function handleUserCreated(data: any) {
     const { id, email_addresses, image_url, first_name, last_name, username } = data
+    console.log('webhook触发，用户数据：', evt.data)
     const user = {
       clerkId: id,
       email: email_addresses[0].email_address,
@@ -93,15 +93,18 @@ export async function POST(req: Request) {
     }
 
     // 提取相关信息后创建新用户
+    console.log('创建新用户: ', user)
     const newUser = await createUser(user)
+    console.log('新用户创建成功:', newUser)
 
     // 将 clerkID 和数据库中的 ID 合并
     if (newUser) {
-      await clerkClient.users.updateUserMetadata(id, {
+      const updatedUser = await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
           userId: newUser._id,
         }
       })
+      console.log('clerk用户已更新: ', updatedUser)
     }
 
     return NextResponse.json({ message: 'User created', user: newUser })

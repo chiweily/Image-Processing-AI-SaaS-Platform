@@ -24,7 +24,7 @@ export interface IImage extends Document {
 }   
 
 // mongoose 模型
-const ImageSchema = new Schema<IImage>({
+const ImageSchema = new Schema({
     title: {
         type: String, 
         required: true
@@ -79,5 +79,5 @@ const ImageSchema = new Schema<IImage>({
     }
 })
 
-const Image = models?.Image || model<IImage>('Image', ImageSchema)
+const Image = models?.Image || model('Image', ImageSchema)
 export default Image

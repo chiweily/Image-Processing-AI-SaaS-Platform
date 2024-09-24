@@ -12,7 +12,7 @@ const Profile = async ({searchParams}: SearchParamProps) => {
   const page = Number(searchParams?.page) || 1
   const icons = useIcons()
 
-  const {userId} = auth()
+  const {userId}: {userId: string | null} = auth()
   if(!userId) redirect('/sign-in')
 
   const user = await getUserById(userId)
