@@ -87,8 +87,8 @@ export async function POST(req: Request) {
       clerkId: id,
       email: email_addresses[0].email_address,
       username: username!,
-      firstName: first_name as string,
-      lastName: last_name as string,
+      firstName: first_name,
+      lastName: last_name,
       photo: image_url,
     }
 
@@ -99,12 +99,12 @@ export async function POST(req: Request) {
 
     // 将 clerkID 和数据库中的 ID 合并
     if (newUser) {
-      const updatedUser = await clerkClient.users.updateUserMetadata(id, {
+      await clerkClient.users.updateUserMetadata(id, {
         publicMetadata: {
           userId: newUser._id,
         }
       })
-      console.log('clerk用户已更新: ', updatedUser)
+      /* console.log('clerk用户已更新: ', updatedUser) */
     }
 
     return NextResponse.json({ message: 'User created', user: newUser })
