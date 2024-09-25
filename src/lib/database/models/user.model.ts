@@ -1,4 +1,4 @@
-// clerkId, email, userName, photo, firstName, lastName, planId, creditBalance
+// clerkId, email, username, photo, firstName, lastName, planId, creditBalance
 
 import { model, models, Schema } from "mongoose"
 
@@ -14,7 +14,7 @@ const UserSchema = new Schema({
         required: true,
         unique: true
     },
-    userName: {
+    username: {
         type: String,
         required: true,
         unique: true
