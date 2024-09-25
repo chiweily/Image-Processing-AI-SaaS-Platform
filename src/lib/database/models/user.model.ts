@@ -2,19 +2,6 @@
 
 import { model, models, Schema } from "mongoose"
 
-/* // interface
-export interface User {
-    _id: string,
-    clerkId: string,
-    email: string,
-    userName: string,
-    photo: string,
-    firstName: string,
-    lastName: string,
-    planId: number,
-    creditBalance: number,
-} */
-
 // schema
 const UserSchema = new Schema({
     clerkId: {
@@ -27,7 +14,7 @@ const UserSchema = new Schema({
         required: true,
         unique: true
     },
-    userName: {
+    username: {
         type: String,
         required: true,
         unique: true

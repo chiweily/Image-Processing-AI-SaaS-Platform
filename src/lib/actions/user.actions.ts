@@ -9,12 +9,14 @@ import { handleError } from "../utils"
 export async function createUser(user: CreateUserParams) {
     try {
         await connectToDatabase()
-        console.log('mongoDB已连接') 
+        console.log('创建用户mongoDB已连接') 
         
         const newUser = await User.create(user)
+        console.log('用户创建成功:', newUser);
 
         return JSON.parse(JSON.stringify(newUser))
     } catch (error) {
+        console.error('用户创建出错:', error);
         handleError(error)
     }
 }
@@ -24,7 +26,7 @@ export async function getUserById(userId: string) {
     try {
 
         await connectToDatabase()
-        console.log('mongoDB已连接')
+        console.log('读取user信息mongoDB已连接')
 
         console.log(`正在查询 MongoDB 中的 clerkId: ${userId}`);
         const user = await User.findOne({clerkId: userId})

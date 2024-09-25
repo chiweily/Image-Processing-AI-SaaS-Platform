@@ -31,7 +31,17 @@ export const connectToDatabase = async (): Promise<Mongoose>=> {
     throw new Error('请在 .env 文件中设置 MONGODB_URL 环境变量')
    }
 
-   try {
+   cached.promise = 
+    cached.promise || 
+    mongoose.connect(MONGODB_URL, { 
+      dbName: 'image-processing-db', bufferCommands: false, connectTimeoutMS: 30000
+    })
+
+  cached.conn = await cached.promise;
+
+  return cached.conn;
+
+   /* try {
     if(!cached.promise) {
       const opts = {
         dbName: 'image-processing-db',
@@ -46,5 +56,5 @@ export const connectToDatabase = async (): Promise<Mongoose>=> {
    } catch (error) {
     console.error('MongoDB 连接错误:', error);
     throw error
-   }
+   } */
 }

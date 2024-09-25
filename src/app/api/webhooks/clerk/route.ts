@@ -4,6 +4,7 @@ import { clerkClient, WebhookEvent } from '@clerk/nextjs/server'
 import { createUser, deleteUser, updateUser } from '@/lib/actions/user.actions'
 import { NextResponse } from 'next/server'
 
+
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
 
@@ -57,80 +58,73 @@ export async function POST(req: Request) {
   // 获取 id 和事件类型
   const { id } = evt.data
   const eventType = evt.type
+  console.log('Webhook received:', eventType);
 
-  try {
-    switch (eventType) {
-      case 'user.created':
-        return await handleUserCreated(evt.data)
-      case 'user.updated':
-        return await handleUserUpdated(evt.data)
-      case 'user.deleted':
-        return await handleUserDeleted(evt.data)
-      default:
-        console.log(`Unhandled event type: ${eventType}`)
-        return new Response('Unsupported event type', {
-          status: 400
-        })
+    // CREATE
+  if (eventType === "user.created") {
+    try {
+      const { id, email_addresses, image_url, first_name, last_name, username } = evt.data;
+
+      const email = (email_addresses && email_addresses.length > 0) 
+      ? email_addresses[0].email_address 
+      : "no-email@example.com"; // 提供默认值或处理无 email 的情况
+
+      const user = {
+        clerkId: id,
+        email: email,
+        username: username || "defaultUsername",  // 如果 username 为空，则使用默认值
+        firstName: first_name || "FirstName",     // 同样可以为 firstName 设置默认值
+        lastName: last_name || "LastName",
+        photo: image_url,
+      };
+
+      console.log('尝试创建用户:', evt.data.id);
+      const newUser = await createUser(user);
+      console.log('用户创建成功: ', newUser);
+
+      // Set public metadata
+      if (newUser) {
+        await clerkClient.users.updateUserMetadata(id, {
+          publicMetadata: {
+            userId: newUser._id,
+          },
+        });
+      }
+
+      return NextResponse.json({ message: "OK", user: newUser });
+    } catch (error) {
+      console.error('Error in user creation webhook:', error);
+      return NextResponse.json({ message: "Error" }, { status: 500 });
     }
-  } catch (error) {
-    console.error(`Error processing ${eventType} event:`, error)
-    return new Response('Error processing event', {
-      status: 500
-    })
   }
 
-  // create user
-  async function handleUserCreated(data: any) {
-    const { id, email_addresses, image_url, first_name, last_name, username } = data
-    console.log('webhook触发，用户数据：', evt.data)
+  // UPDATE
+  if (eventType === "user.updated") {
+    const { id, image_url, first_name, last_name, username } = evt.data;
+
     const user = {
-      clerkId: id,
-      email: email_addresses[0].email_address,
-      username: username!,
-      firstName: first_name,
-      lastName: last_name,
+      username: username || "defaultUsername",  
+      firstName: first_name || "FirstName",     
+      lastName: last_name || "LastName",
       photo: image_url,
-    }
+    };
 
-    // 提取相关信息后创建新用户
-    console.log('创建新用户: ', user)
-    const newUser = await createUser(user)
-    console.log('新用户创建成功:', newUser)
+    const updatedUser = await updateUser(id, user);
 
-    // 将 clerkID 和数据库中的 ID 合并
-    if (newUser) {
-      await clerkClient.users.updateUserMetadata(id, {
-        publicMetadata: {
-          userId: newUser._id,
-        }
-      })
-      /* console.log('clerk用户已更新: ', updatedUser) */
-    }
-
-    return NextResponse.json({ message: 'User created', user: newUser })
-  }
-  
-
-  // update user info
-  async function handleUserUpdated(data: any) {
-    const { id, image_url, first_name, last_name, username } = data
-    const user = {
-      firstName: first_name as string,
-      lastName: last_name as string,
-      username: username!,
-      photo: image_url,
-    }
-
-    const updatedUser = await updateUser(id, user)
-    return NextResponse.json({ message: 'User updated', user: updatedUser })
+    return NextResponse.json({ message: "OK", user: updatedUser });
   }
 
+  // DELETE
+  if (eventType === "user.deleted") {
+    const { id } = evt.data;
 
-  // delete user
-  async function handleUserDeleted(data: any) {
-    const { id } = data
-    const deletedUser = await deleteUser(id!)
+    const deletedUser = await deleteUser(id!);
 
-    return NextResponse.json({ message: 'User deleted', user: deletedUser })
+    return NextResponse.json({ message: "OK", user: deletedUser });
   }
+
+  console.log(`Webhook with and ID of ${id} and type of ${eventType}`);
+  console.log("Webhook body:", body);
+
+  return new Response("", { status: 200 })
 }
