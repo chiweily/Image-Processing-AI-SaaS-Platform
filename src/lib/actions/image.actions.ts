@@ -21,11 +21,13 @@ const populateUser = (query: any) =>
 export async function addImage({ image, userId, path }: AddImageParams) {
     try {
         await connectToDatabase()
+        console.log('添加图片mongoDB已连接')
 
         // 图片的创作者
         const author = await User.findById(userId)
-        if(!author) throw new Error("User not found")
-        // 新图片
+        if(!author) throw new Error('未找到用户')
+        
+            // 新图片
         const newImage = await Image.create({
             ...image,
             author: author._id,
@@ -45,7 +47,7 @@ export async function updateImage({ image, userId, path }: UpdateImageParams) {
         await connectToDatabase()
 
         // 要更新的图片
-        const imageToUpdate = await Image.findByIdAndUpdate(image._id)
+        const imageToUpdate = await Image.findById(image._id)
         if(!imageToUpdate || imageToUpdate.author.toHexString() !== userId) {
             throw new Error("Unauthorized or image not found")
         }
@@ -66,15 +68,9 @@ export async function deleteImage(imageId: string) {
     try {
         await connectToDatabase()
 
-        /* const imageToDelete = await Image.findOne({id: imageId})
-        if(!imageToDelete) {
-            throw new Error("Image not found")
-        } */
-
         // 删除图像
         await Image.findByIdAndDelete(imageId)
-        // revalidatePath('/')
-        // return deleteImage ? JSON.parse(JSON.stringify(deleteImage)) : null
+        
     } catch (error) {
         handleError(error)
     } finally {
@@ -92,7 +88,7 @@ export async function getImageById(imageId: string) {
         const image = await populateUser(Image.findById(imageId))
         
         if(!image) {
-            throw new Error("Image not found")
+            throw new Error("未找到图片")
         }
 
         return JSON.parse(JSON.stringify(image))

@@ -63,7 +63,7 @@ export async function POST(req: Request) {
     // CREATE
   if (eventType === "user.created") {
     try {
-      const { id, email_addresses, image_url, first_name, last_name, username } = evt.data;
+      const { id, email_addresses, image_url, first_name, last_name, userName } = evt.data;
 
       const email = (email_addresses && email_addresses.length > 0) 
       ? email_addresses[0].email_address 
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
       const user = {
         clerkId: id,
         email: email,
-        username: username || "defaultUsername",  // 如果 username 为空，则使用默认值
+        userName: userName || "defaultUsername",  // 如果 userName 为空，则使用默认值
         firstName: first_name || "FirstName",     // 同样可以为 firstName 设置默认值
         lastName: last_name || "LastName",
         photo: image_url,
@@ -100,10 +100,10 @@ export async function POST(req: Request) {
 
   // UPDATE
   if (eventType === "user.updated") {
-    const { id, image_url, first_name, last_name, username } = evt.data;
+    const { id, image_url, first_name, last_name, userName } = evt.data;
 
     const user = {
-      username: username || "defaultUsername",  
+      userName: userName || "defaultUsername",  
       firstName: first_name || "FirstName",     
       lastName: last_name || "LastName",
       photo: image_url,
