@@ -41,20 +41,4 @@ export const connectToDatabase = async (): Promise<Mongoose>=> {
 
   return cached.conn;
 
-   /* try {
-    if(!cached.promise) {
-      const opts = {
-        dbName: 'image-processing-db',
-        bufferCommands: false,
-        connectTimeoutMS: 30000,
-      }
-
-      cached.promise = mongoose.connect(MONGODB_URL, opts)
-    }
-    cached.conn = await cached.promise
-    return cached.conn
-   } catch (error) {
-    console.error('MongoDB 连接错误:', error);
-    throw error
-   } */
 }

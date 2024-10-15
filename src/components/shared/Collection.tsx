@@ -18,6 +18,7 @@ import Image from 'next/image'
 import { transformationTypes } from '@/constants'
   
 
+// 已处理的照片的展示
 export const Collection = ({
     hasSearch = false,
     images,

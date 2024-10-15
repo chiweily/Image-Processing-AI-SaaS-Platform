@@ -108,16 +108,3 @@ export async function updateCredits(userId: string, creditFee: number) {
             handleError(error)
         }
 }
-
-// test是否正确连接到数据库
-/* async function testConnection() {
-    try {
-      const conn = await connectToDatabase();
-      console.log('已连接到mongodb!');
-      // 可以在这里进行一些简单的数据库操作来进一步验证连接
-    } catch (error) {
-      console.error('未连接到MongoDB:', error);
-    }
-  }
-  
-  testConnection(); */
